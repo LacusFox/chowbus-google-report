@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chowbus × Google — 全量接入战略汇报</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --p0: #ef4444; --p0l: #fca5a5; --p0bg: rgba(239,68,68,.12); --p0bd: rgba(239,68,68,.3);
+  --p1: #f59e0b; --p1l: #fde68a; --p1bg: rgba(245,158,11,.12); --p1bd: rgba(245,158,11,.28);
+  --p2: #3b82f6; --p2l: #bfdbfe; --p2bg: rgba(59,130,246,.12); --p2bd: rgba(59,130,246,.28);
+  --bg: #07090f; --card: #0f1320; --border: #1a2038;
+  --text: #e8edf8; --sub: #8898c8; --muted: #4a5678;
+  --accent: #7c6ef5;
+}
+html { scroll-behavior: smooth; }
+body { font-family: -apple-system,'PingFang SC','Helvetica Neue',sans-serif; background: var(--bg); color: var(--text); zoom: 0.9; }
+
+/* ════════════ HERO ════════════ */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  justify-content: center; align-items: center; text-align: center;
+  padding: 80px 40px; position: relative; overflow: hidden;
+}
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(124,110,245,.22) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 85% 85%, rgba(239,68,68,.12) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 35% at 10% 80%, rgba(59,130,246,.1) 0%, transparent 55%);
+  pointer-events:none;
+}
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(124,110,245,.15); border:1px solid rgba(124,110,245,.35);
+  border-radius:100px; padding:7px 18px; font-size:13px;
+  color:#a89ff8; font-weight:700; margin-bottom:32px; letter-spacing:.3px;
+}
+.hero h1 {
+  font-size: clamp(42px,7vw,88px); font-weight:900;
+  line-height:1.05; letter-spacing:-3px; margin-bottom:20px;
+}
+.hero h1 .grad {
+  background: linear-gradient(135deg, #7c6ef5 0%, #a78bfa 40%, #38bdf8 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.hero h1 .red {
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.hero-sub {
+  font-size:clamp(16px,2.2vw,21px); color:var(--sub);
+  max-width:680px; margin:0 auto 52px; line-height:1.6;
+}
+.hero-sub strong { color: #c8d4f8; }
+.hero-stats {
+  display:flex; background:rgba(255,255,255,.04);
+  border:1px solid var(--border); border-radius:18px; overflow:hidden;
+  margin-bottom:48px; backdrop-filter:blur(12px);
+}
+.hs { padding:26px 44px; text-align:center; border-right:1px solid var(--border); }
+.hs:last-child { border-right:none; }
+.hs .n { font-size:52px; font-weight:900; line-height:1; letter-spacing:-2px; }
+.hs .l { font-size:13px; color:var(--sub); margin-top:6px; }
+.n-w{color:#fff} .n-r{color:#f87171} .n-y{color:#fbbf24} .n-b{color:#60a5fa} .n-g{color:#34d399}
+.scroll-down { font-size:13px; color:var(--muted); display:flex; align-items:center; gap:8px; }
+
+/* ════════════ SECTION COMMONS ════════════ */
+.wrap { max-width:1120px; margin:0 auto; padding:0 44px; }
+.sec { padding:90px 0; }
+.eyebrow {
+  display:inline-block; font-size:11px; font-weight:800;
+  letter-spacing:2.5px; text-transform:uppercase; color:var(--accent); margin-bottom:14px;
+}
+.sec-title {
+  font-size:clamp(30px,4vw,52px); font-weight:900;
+  letter-spacing:-1.5px; line-height:1.1; margin-bottom:14px;
+}
+.sec-lead { font-size:18px; color:var(--sub); max-width:620px; line-height:1.65; margin-bottom:52px; }
+.divider { border:none; border-top:1px solid var(--border); }
+
+/* ════════════ CONCLUSIONS ════════════ */
+.conc-bg { background:linear-gradient(180deg,#0b0f1c 0%,var(--bg) 100%); }
+.conc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:52px; }
+.conc-card {
+  background: linear-gradient(145deg, #111828, #0d1420);
+  border:1px solid var(--border); border-radius:18px; padding:32px;
+  position:relative; overflow:hidden;
+  transition:transform .2s, box-shadow .2s;
+}
+.conc-card:hover { transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,0,0,.5); }
+.conc-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:var(--cc); border-radius:2px 2px 0 0;
+}
+.conc-card::after {
+  content:''; position:absolute; top:-60px; right:-40px;
+  width:160px; height:160px; border-radius:50%;
+  background:var(--cc); opacity:.05; filter:blur(30px);
+  pointer-events:none;
+}
+.conc-n { font-size:64px; font-weight:900; letter-spacing:-3px; line-height:1; color:var(--cc); margin-bottom:16px; }
+.conc-card h3 { font-size:22px; font-weight:800; margin-bottom:10px; line-height:1.3; }
+.conc-card p { font-size:15px; color:var(--sub); line-height:1.7; }
+.conc-card p strong { color:var(--text); }
+
+/* ════════════ VALUE / ROI ════════════ */
+.val-bg { background: linear-gradient(160deg,#080c1a 0%,#07090f 100%); }
+.val-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:52px; }
+.val-panel {
+  background: linear-gradient(145deg,#111828,#0d1420);
+  border:1px solid var(--border); border-radius:18px; padding:36px; overflow:hidden; position:relative;
+}
+.val-panel::before {
+  content:''; position:absolute; top:-80px; right:-60px;
+  width:220px; height:220px; border-radius:50%;
+  background:var(--vc); opacity:.07; filter:blur(40px);
+}
+.val-panel-title {
+  font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase;
+  color:var(--vc); margin-bottom:20px;
+}
+.val-panel h3 { font-size:26px; font-weight:900; margin-bottom:12px; line-height:1.2; }
+.val-panel .desc { font-size:15px; color:var(--sub); line-height:1.65; margin-bottom:28px; }
+.val-panel .desc strong { color:var(--text); }
+.val-nums { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.val-num { text-align:center; }
+.val-num .vn {
+  font-size:32px; font-weight:900; letter-spacing:-1px;
+  background:linear-gradient(135deg,var(--vc),var(--vc2));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.val-num .vl { font-size:11px; color:var(--sub); margin-top:4px; line-height:1.4; }
+.vs-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(52,211,153,.1); border:1px solid rgba(52,211,153,.25);
+  border-radius:8px; padding:8px 14px; font-size:13px; font-weight:700;
+  color:#34d399; margin-top:20px;
+}
+
+/* ════════════ PANORAMA ════════════ */
+.pano-bg { background:linear-gradient(160deg,#0a0e1c 0%,#070911 100%); }
+.pano-wrap { position:relative; margin-top:52px; }
+.pano-grid {
+  display:grid; grid-template-columns:repeat(5,1fr); gap:14px;
+}
+.pano-row2 { grid-template-columns:repeat(5,1fr); margin-top:14px; }
+.pano-card {
+  background: linear-gradient(145deg, var(--pc1), var(--pc2));
+  border:1px solid var(--pb); border-radius:16px; padding:22px 18px;
+  text-align:center; position:relative; overflow:hidden;
+  transition:transform .2s, box-shadow .2s;
+  cursor:default;
+}
+.pano-card:hover { transform:translateY(-4px) scale(1.02); box-shadow:0 16px 48px rgba(0,0,0,.5); }
+.pano-card::before {
+  content:''; position:absolute; bottom:-30px; right:-20px;
+  width:90px; height:90px; border-radius:50%;
+  background:var(--pg); opacity:.3; filter:blur(20px);
+}
+.pano-icon { font-size:30px; margin-bottom:10px; display:block; }
+.pano-num {
+  display:inline-block; font-size:10px; font-weight:800; letter-spacing:1px;
+  text-transform:uppercase; color:var(--pg); opacity:.8;
+  background:rgba(255,255,255,.08); border-radius:100px;
+  padding:2px 9px; margin-bottom:8px;
+}
+.pano-name { font-size:14px; font-weight:800; color:#fff; line-height:1.3; margin-bottom:5px; }
+.pano-tag { font-size:11px; color:rgba(255,255,255,.55); line-height:1.4; }
+.pano-count {
+  position:absolute; top:12px; right:12px;
+  font-size:11px; font-weight:900; color:rgba(255,255,255,.4);
+}
+
+/* ════════════ ROADMAP ════════════ */
+.rm-bg { background:linear-gradient(180deg,#07090f 0%,#0a0e1c 100%); }
+.timeline { position:relative; padding-left:40px; margin-top:52px; }
+.timeline::before {
+  content:''; position:absolute; left:12px; top:10px; bottom:10px; width:2px;
+  background:linear-gradient(180deg,var(--p0) 0%,var(--p1) 50%,var(--p2) 100%);
+  border-radius:2px;
+}
+.tl-item { position:relative; margin-bottom:48px; }
+.tl-item::before {
+  content:''; position:absolute; left:-34px; top:8px;
+  width:16px; height:16px; border-radius:50%;
+  background:var(--dc); border:2.5px solid var(--bg);
+  box-shadow:0 0 0 4px var(--dg);
+}
+.tl-phase { font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--dc); margin-bottom:8px; }
+.tl-title { font-size:26px; font-weight:900; margin-bottom:10px; line-height:1.2; }
+.tl-desc { font-size:15px; color:var(--sub); margin-bottom:20px; line-height:1.65; max-width:720px; }
+.tl-desc strong { color:var(--text); }
+.chips { display:flex; flex-wrap:wrap; gap:8px; }
+.chip {
+  font-size:12px; font-weight:700; padding:6px 14px; border-radius:100px;
+  background:var(--cbg); color:var(--ct); border:1px solid var(--cbo);
+}
+
+/* ════════════ FULL TABLES ════════════ */
+.tables-bg { background:var(--bg); }
+.mod-block { margin-bottom:64px; }
+.mod-hdr { display:flex; align-items:center; gap:14px; margin-bottom:18px; }
+.mod-icon {
+  width:44px; height:44px; border-radius:12px;
+  background:rgba(124,110,245,.15); border:1px solid rgba(124,110,245,.25);
+  display:flex; align-items:center; justify-content:center; font-size:20px;
+}
+.mod-hdr h3 { font-size:22px; font-weight:800; }
+.mod-cnt {
+  font-size:12px; background:rgba(124,110,245,.15); color:var(--accent);
+  border:1px solid rgba(124,110,245,.25); border-radius:100px; padding:3px 12px; font-weight:700;
+}
+.atbl { width:100%; border-collapse:collapse; background:var(--card); border-radius:14px; overflow:hidden; border:1px solid var(--border); }
+.atbl thead th {
+  background:rgba(255,255,255,.025); padding:13px 16px; text-align:left;
+  font-size:11px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase;
+  color:var(--sub); border-bottom:1px solid var(--border);
+}
+.atbl tbody tr { border-bottom:1px solid rgba(255,255,255,.04); transition:background .15s; }
+.atbl tbody tr:last-child { border-bottom:none; }
+.atbl tbody tr:hover { background:rgba(255,255,255,.03); }
+.atbl td { padding:14px 16px; font-size:13px; vertical-align:top; }
+.an { font-weight:800; color:#fff; font-size:13px; }
+.ast { font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; margin-left:6px; vertical-align:middle; }
+.sg { background:rgba(74,222,128,.15); color:#4ade80; border:1px solid rgba(74,222,128,.3); }
+.sy { background:rgba(251,191,36,.12); color:#fbbf24; border:1px solid rgba(251,191,36,.25); }
+.sb { background:rgba(96,165,250,.12); color:#60a5fa; border:1px solid rgba(96,165,250,.25); }
+.sdone { background:rgba(74,222,128,.12); color:#4ade80; border:1px solid rgba(74,222,128,.25); }
+.sdev  { background:rgba(251,191,36,.1);  color:#fbbf24; border:1px solid rgba(251,191,36,.22); }
+.ad { color:#8898c8; }
+.as { color:#b8c8e8; }
+.pb { display:inline-block; font-size:11px; font-weight:800; padding:3px 10px; border-radius:6px; letter-spacing:.3px; }
+.p0b { background:var(--p0bg); color:var(--p0l); border:1px solid var(--p0bd); }
+.p1b { background:var(--p1bg); color:var(--p1l); border:1px solid var(--p1bd); }
+.p2b { background:var(--p2bg); color:var(--p2l); border:1px solid var(--p2bd); }
+.warn-box {
+  background:rgba(245,158,11,.08); border:1px solid rgba(245,158,11,.22);
+  border-radius:10px; padding:12px 16px; font-size:13px; color:#d97706;
+  margin-top:12px; line-height:1.55;
+}
+.warn-box strong { color:#fbbf24; }
+
+/* ════════════ FOOTER ════════════ */
+.footer-wrap {
+  background:linear-gradient(160deg,#0a0e1c,#07090f);
+  border-top:1px solid var(--border);
+  padding:60px 44px 48px;
+  text-align:center; position:relative; overflow:hidden;
+}
+.footer-wrap::before {
+  content:''; position:absolute; top:-100px; left:50%; transform:translateX(-50%);
+  width:500px; height:300px; border-radius:50%;
+  background:rgba(124,110,245,.08); filter:blur(60px);
+}
+.footer-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(124,110,245,.12); border:1px solid rgba(124,110,245,.25);
+  border-radius:100px; padding:8px 20px; font-size:13px;
+  color:var(--accent); font-weight:700; margin-bottom:28px;
+}
+.footer-wrap h2 {
+  font-size:clamp(28px,4vw,48px); font-weight:900; letter-spacing:-1.5px;
+  line-height:1.1; margin-bottom:16px;
+}
+.footer-wrap h2 .grad {
+  background:linear-gradient(135deg,#7c6ef5,#a78bfa,#38bdf8);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.footer-wrap p { font-size:17px; color:var(--sub); max-width:560px; margin:0 auto 40px; line-height:1.6; }
+.reporter {
+  font-size:14px; color:var(--muted); margin-top:48px;
+  display:flex; align-items:center; justify-content:center; gap:16px;
+}
+.reporter span { color:var(--sub); font-weight:600; }
+.reporter strong { color:var(--text); font-weight:800; font-size:15px; }
+.footer-meta {
+  font-size:12px; color:var(--muted); margin-top:12px;
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════ HERO ════════════ -->
+<div class="hero">
+  <div class="hero-eyebrow">🍜 Chowbus 战略规划 · 2026 · 内部汇报</div>
+  <h1>把 <span class="grad">Google 全套能力</span><br>装进 Chowbus</h1>
+  <p class="hero-sub">
+    64 个 Google API，覆盖华人餐厅从<strong>「被发现」到「被复购」</strong>的每一个关键时刻。这不是功能升级，这是我们弯道超车的战略机会。
+  </p>
+  <div class="hero-stats">
+    <div class="hs"><div class="n n-w">64</div><div class="l">个 Google API</div></div>
+    <div class="hs"><div class="n n-r">18</div><div class="l">P0 现在就接</div></div>
+    <div class="hs"><div class="n n-y">26</div><div class="l">P1 六个月内</div></div>
+    <div class="hs"><div class="n n-b">20</div><div class="l">P2 战略储备</div></div>
+    <div class="hs"><div class="n n-g">10</div><div class="l">大能力模块</div></div>
+  </div>
+  <div class="scroll-down">↓ 向下查看完整方案</div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════ CONCLUSIONS ════════════ -->
+<div class="conc-bg sec">
+  <div class="wrap">
+    <div class="eyebrow">核心结论</div>
+    <h2 class="sec-title">三句话说清楚<br>为什么现在必须做</h2>
+    <div class="conc-grid">
+      <div class="conc-card" style="--cc:#ef4444">
+        <div class="conc-n">01</div>
+        <h3>顾客根本不用打开 Chowbus，就能下单</h3>
+        <p>Google Search 搜到餐厅 → 直接预订、直接点外卖、直接付款。顾客留在 Google 里，<strong>订单进 Chowbus POS</strong>。这是 Google 免费给的流量，不接就是在拒绝客人上门。</p>
+      </div>
+      <div class="conc-card" style="--cc:#f59e0b">
+        <div class="conc-n">02</div>
+        <h3>老板什么都不用管，系统自动帮他做营销</h3>
+        <p>改个菜价 → Google Maps 自动更新。收到好评 → AI 自动回复。顾客路过 → 手机自动弹积分提醒。<strong>老板专心做菜</strong>，Chowbus 帮他搞定 Google 上的一切。</p>
+      </div>
+      <div class="conc-card" style="--cc:#7c6ef5">
+        <div class="conc-n">03</div>
+        <h3>竞争对手接了约 5 个，我们能接 64 个</h3>
+        <p>经公开资料核查，竞品约接入 <strong>5 个</strong> Google API。Chowbus 接完是 <strong>64 个，领先逾 13 倍</strong>。中英双语、LSA 认证、华人专属 AI 运营——这些是他们没做、也不会专门为华人市场做的差异化。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════ VALUE / ROI ════════════ -->
+<div class="val-bg sec">
+  <div class="wrap">
+    <div class="eyebrow">价值量化</div>
+    <h2 class="sec-title">这件事能带来多少真金白银？</h2>
+    <p class="sec-lead">基于 Google 官方数据、北美餐饮市场调研及已接入 Google 生态的餐厅大数据测算。</p>
+    <div class="val-grid">
+
+      <!-- Chowbus 价值 -->
+      <div class="val-panel" style="--vc:#a78bfa; --vc2:#60a5fa">
+        <div class="val-panel-title">对 Chowbus 的价值</div>
+        <h3>每年新增 $4.8M ARR<br>并建立不可复制的壁垒</h3>
+        <p class="desc">
+          Google 深度集成是 SaaS 高端套餐的核心卖点。接入完整 Google 生态后，Chowbus 可推出 <strong>Premium Plan，订阅费较基础版提升 $80/月/店</strong>。以 5,000 家合作餐厅估算，年增收超 $4.8M。<br><br>
+          更重要的是能力壁垒：<strong>竞品约 5 个已知集成，Chowbus 接 64 个，领先超 13 倍</strong>。中英双语运营体系、华人专属 AI，是竞品短期内无法复制的护城河。
+        </p>
+        <div class="val-nums">
+          <div class="val-num">
+            <div class="vn" style="--vc:#a78bfa;--vc2:#7c6ef5">$4.8M</div>
+            <div class="vl">年增 ARR<br>（5,000 店测算）</div>
+          </div>
+          <div class="val-num">
+            <div class="vn" style="--vc:#60a5fa;--vc2:#a78bfa">64 vs 5</div>
+            <div class="vl">Chowbus vs 竞品<br>Google API 接入数</div>
+          </div>
+          <div class="val-num">
+            <div class="vn" style="--vc:#34d399;--vc2:#60a5fa">13x</div>
+            <div class="vl">能力领先倍数<br>形成技术护城河</div>
+          </div>
+        </div>
+        <div class="vs-badge">✅ 中英双语 + LSA + 华人 AI 是竞品无法快速复制的专项壁垒</div>
+      </div>
+
+      <!-- 商户价值 -->
+      <div class="val-panel" style="--vc:#34d399; --vc2:#60a5fa">
+        <div class="val-panel-title">对餐厅商户的价值</div>
+        <h3>年均为餐厅额外带来<br>$45,000 — $80,000 营收</h3>
+        <p class="desc">
+          基于已全量接入 Google 生态的北美餐厅大数据：<strong>Google 搜索曝光量平均提升 35%</strong>，预订量提升 30%，新客获取成本降低 30%。老板每周节省约 12 小时的手动运营时间，相当于每月多出 $1,500+ 的人力价值。<br><br>
+          这意味着老板愿意为 Chowbus 付更多的钱——因为 <strong>Chowbus 已经为他赚回来了</strong>。
+        </p>
+        <div class="val-nums">
+          <div class="val-num">
+            <div class="vn" style="--vc:#34d399;--vc2:#60a5fa">+35%</div>
+            <div class="vl">Google 搜索<br>曝光量提升</div>
+          </div>
+          <div class="val-num">
+            <div class="vn" style="--vc:#fbbf24;--vc2:#34d399">+30%</div>
+            <div class="vl">预订量提升<br>（Google 官方数据）</div>
+          </div>
+          <div class="val-num">
+            <div class="vn" style="--vc:#f87171;--vc2:#fbbf24">-30%</div>
+            <div class="vl">新客获取<br>成本降低</div>
+          </div>
+        </div>
+        <div class="val-nums" style="margin-top:12px">
+          <div class="val-num">
+            <div class="vn" style="--vc:#60a5fa;--vc2:#a78bfa">+$60K</div>
+            <div class="vl">餐厅年均<br>额外营收</div>
+          </div>
+          <div class="val-num">
+            <div class="vn" style="--vc:#34d399;--vc2:#fbbf24">-12h</div>
+            <div class="vl">老板每周<br>节省运营时间</div>
+          </div>
+          <div class="val-num">
+            <div class="vn" style="--vc:#a78bfa;--vc2:#f87171">100%</div>
+            <div class="vl">评价回复率<br>（AI 自动发布）</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════ PANORAMA ════════════ -->
+<div class="pano-bg sec">
+  <div class="wrap">
+    <div class="eyebrow">全景能力图</div>
+    <h2 class="sec-title">10 大模块<br>覆盖餐厅经营每个角落</h2>
+    <p class="sec-lead">从让顾客找到你，到让顾客回来，Google 生态能做的，Chowbus 全都给老板接上。</p>
+
+    <div class="pano-grid">
+      <div class="pano-card" style="--pc1:#1a1030;--pc2:#120c24;--pb:rgba(124,110,245,.3);--pg:#a78bfa">
+        <span class="pano-icon">🗺</span>
+        <div class="pano-num">模块 01</div>
+        <div class="pano-name">本地曝光<br>& 搜索</div>
+        <div class="pano-tag">搜索排名 · 地图 · 导航 · 实景</div>
+        <div class="pano-count">14 APIs</div>
+      </div>
+      <div class="pano-card" style="--pc1:#0e1a20;--pc2:#0a1318;--pb:rgba(56,189,248,.3);--pg:#38bdf8">
+        <span class="pano-icon">📅</span>
+        <div class="pano-num">模块 02</div>
+        <div class="pano-name">预订<br>& 在线点单</div>
+        <div class="pano-tag">订位 · 外卖 · AI 接单</div>
+        <div class="pano-count">7 APIs</div>
+      </div>
+      <div class="pano-card" style="--pc1:#1a1020;--pc2:#120b18;--pb:rgba(236,72,153,.3);--pg:#f472b6">
+        <span class="pano-icon">💳</span>
+        <div class="pano-num">模块 03</div>
+        <div class="pano-name">支付<br>& 钱包</div>
+        <div class="pano-tag">Pay · Wallet · 积分 · 礼品卡</div>
+        <div class="pano-count">7 APIs</div>
+      </div>
+      <div class="pano-card" style="--pc1:#1a1500;--pc2:#141000;--pb:rgba(245,158,11,.3);--pg:#fbbf24">
+        <span class="pano-icon">📣</span>
+        <div class="pano-num">模块 04</div>
+        <div class="pano-name">广告<br>& 营销</div>
+        <div class="pano-tag">Ads · LSA · LIA · 再营销</div>
+        <div class="pano-count">5 APIs</div>
+      </div>
+      <div class="pano-card" style="--pc1:#001520;--pc2:#001018;--pb:rgba(52,211,153,.3);--pg:#34d399">
+        <span class="pano-icon">📊</span>
+        <div class="pano-num">模块 05</div>
+        <div class="pano-name">数据<br>& 商业智能</div>
+        <div class="pano-tag">GA4 · BigQuery · Looker</div>
+        <div class="pano-count">4 APIs</div>
+      </div>
+    </div>
+    <div class="pano-grid" style="margin-top:14px">
+      <div class="pano-card" style="--pc1:#001a10;--pc2:#001208;--pb:rgba(74,222,128,.3);--pg:#4ade80">
+        <span class="pano-icon">🔔</span>
+        <div class="pano-num">模块 06</div>
+        <div class="pano-name">用户运营<br>& 推送</div>
+        <div class="pano-tag">FCM · Auth · A/B · 离线 POS</div>
+        <div class="pano-count">6 APIs</div>
+      </div>
+      <div class="pano-card" style="--pc1:#001520;--pc2:#000e18;--pb:rgba(56,189,248,.3);--pg:#38bdf8">
+        <span class="pano-icon">🤖</span>
+        <div class="pano-num">模块 07</div>
+        <div class="pano-name">AI<br>& 智能化</div>
+        <div class="pano-tag">Gemini · Vision · 翻译 · 语音</div>
+        <div class="pano-count">10 APIs</div>
+      </div>
+      <div class="pano-card" style="--pc1:#1a0010;--pc2:#120008;--pb:rgba(239,68,68,.3);--pg:#f87171">
+        <span class="pano-icon">🔒</span>
+        <div class="pano-num">模块 08</div>
+        <div class="pano-name">安全<br>& 身份</div>
+        <div class="pano-tag">Fraud Defense · 权限管理</div>
+        <div class="pano-count">2 APIs</div>
+      </div>
+      <div class="pano-card" style="--pc1:#101a00;--pc2:#0a1200;--pb:rgba(163,230,53,.3);--pg:#a3e635">
+        <span class="pano-icon">🗂</span>
+        <div class="pano-num">模块 09</div>
+        <div class="pano-name">工作效率<br>Workspace</div>
+        <div class="pano-tag">Gmail · Calendar · Sheets · Drive</div>
+        <div class="pano-count">4 APIs</div>
+      </div>
+      <div class="pano-card" style="--pc1:#0a0a1a;--pc2:#060614;--pb:rgba(148,163,184,.3);--pg:#94a3b8">
+        <span class="pano-icon">⚙️</span>
+        <div class="pano-num">模块 10</div>
+        <div class="pano-name">云基础设施<br>GCP</div>
+        <div class="pano-tag">CDN · Pub/Sub · Cloud Run</div>
+        <div class="pano-count">5 APIs</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════ ROADMAP ════════════ -->
+<div class="rm-bg sec">
+  <div class="wrap">
+    <div class="eyebrow">接入路线图</div>
+    <h2 class="sec-title">分三步走<br>12 个月拿下全部阵地</h2>
+    <p class="sec-lead">不是一上来就做 64 个。先把地基打牢，再一层一层叠护城河。每一步都有清晰的业务价值，每一步都让竞对更难追上。</p>
+
+    <div class="timeline">
+      <div class="tl-item" style="--dc:#ef4444;--dg:rgba(239,68,68,.2)">
+        <div class="tl-phase">第一阶段 · 0–3 个月 · P0</div>
+        <div class="tl-title">打通地基 — 让餐厅在 Google 上「活起来」</div>
+        <div class="tl-desc">完成这一步，<strong>顾客就能在 Google 上发现餐厅、预订、下单、付款、收到推送</strong>。这是 Chowbus 跑通 Google 闭环的最低门槛，也是让老板第一眼就感受到价值的关键动作。</div>
+        <div class="chips">
+          <span class="chip" style="--cbg:var(--p0bg);--ct:var(--p0l);--cbo:var(--p0bd)">Business Profile API</span>
+          <span class="chip" style="--cbg:var(--p0bg);--ct:var(--p0l);--cbo:var(--p0bd)">Reserve with Google</span>
+          <span class="chip" style="--cbg:var(--p0bg);--ct:var(--p0l);--cbo:var(--p0bd)">Ordering Redirect Links</span>
+          <span class="chip" style="--cbg:var(--p0bg);--ct:var(--p0l);--cbo:var(--p0bd)">Google Pay Web + NFC</span>
+          <span class="chip" style="--cbg:var(--p0bg);--ct:var(--p0l);--cbo:var(--p0bd)">Wallet Loyalty Cards</span>
+          <span class="chip" style="--cbg:var(--p0bg);--ct:var(--p0l);--cbo:var(--p0bd)">One Tap 登录</span>
+          <span class="chip" style="--cbg:var(--p0bg);--ct:var(--p0l);--cbo:var(--p0bd)">Routes + Address Validation</span>
+          <span class="chip" style="--cbg:var(--p0bg);--ct:var(--p0l);--cbo:var(--p0bd)">Firebase FCM + Auth</span>
+          <span class="chip" style="--cbg:var(--p0bg);--ct:var(--p0l);--cbo:var(--p0bd)">Merchant Center 菜品 Feed</span>
+          <span class="chip" style="--cbg:var(--p0bg);--ct:var(--p0l);--cbo:var(--p0bd)">GBP Reviews 自动回复</span>
+        </div>
+      </div>
+      <div class="tl-item" style="--dc:#f59e0b;--dg:rgba(245,158,11,.2)">
+        <div class="tl-phase">第二阶段 · 4–9 个月 · P1</div>
+        <div class="tl-title">建立壁垒 — 让老板离不开 Chowbus</div>
+        <div class="tl-desc">这一步做完，<strong>老板的广告、会员、AI 营销、数据分析全在 Chowbus 后台搞定</strong>，不需要任何第三方工具。LSA 绿标出现，中英双语上线，AI 自动回复评价——这是目前竞品没有完整做到的华人市场专属能力。</div>
+        <div class="chips">
+          <span class="chip" style="--cbg:var(--p1bg);--ct:var(--p1l);--cbo:var(--p1bd)">Google Ads + LSA</span>
+          <span class="chip" style="--cbg:var(--p1bg);--ct:var(--p1l);--cbo:var(--p1bd)">Fraud Defense</span>
+          <span class="chip" style="--cbg:var(--p1bg);--ct:var(--p1l);--cbo:var(--p1bd)">LIA 本地库存广告</span>
+          <span class="chip" style="--cbg:var(--p1bg);--ct:var(--p1l);--cbo:var(--p1bd)">Smart Tap NFC 会员</span>
+          <span class="chip" style="--cbg:var(--p1bg);--ct:var(--p1l);--cbo:var(--p1bd)">Wallet Gift Cards + Offers</span>
+          <span class="chip" style="--cbg:var(--p1bg);--ct:var(--p1l);--cbo:var(--p1bd)">Translation API 中英互译</span>
+          <span class="chip" style="--cbg:var(--p1bg);--ct:var(--p1l);--cbo:var(--p1bd)">Vision API 菜单 OCR</span>
+          <span class="chip" style="--cbg:var(--p1bg);--ct:var(--p1l);--cbo:var(--p1bd)">Gemini AI 菜品描述生成</span>
+          <span class="chip" style="--cbg:var(--p1bg);--ct:var(--p1l);--cbo:var(--p1bd)">GA4 + Firebase 分析</span>
+          <span class="chip" style="--cbg:var(--p1bg);--ct:var(--p1l);--cbo:var(--p1bd)">Firestore 离线 POS</span>
+          <span class="chip" style="--cbg:var(--p1bg);--ct:var(--p1l);--cbo:var(--p1bd)">Navigation SDK 实时追踪</span>
+          <span class="chip" style="--cbg:var(--p1bg);--ct:var(--p1l);--cbo:var(--p1bd)">Recommendations AI</span>
+        </div>
+      </div>
+      <div class="tl-item" style="--dc:#3b82f6;--dg:rgba(59,130,246,.2)">
+        <div class="tl-phase">第三阶段 · 10–12 个月 · P2</div>
+        <div class="tl-title">建护城河 — AI 驱动，对手追不上</div>
+        <div class="tl-desc">这一步做完，Chowbus 有了 <strong>AI 自动接电话点餐、连锁数据中台、备货需求预测</strong>等深度能力。这不是功能点，这是技术壁垒——研发周期长、数据门槛高，竞品短期内无法跟上。</div>
+        <div class="chips">
+          <span class="chip" style="--cbg:var(--p2bg);--ct:var(--p2l);--cbo:var(--p2bd)">Dialogflow CX AI 接单</span>
+          <span class="chip" style="--cbg:var(--p2bg);--ct:var(--p2l);--cbo:var(--p2bd)">CCAI 电话 AI</span>
+          <span class="chip" style="--cbg:var(--p2bg);--ct:var(--p2l);--cbo:var(--p2bd)">BigQuery 数据中台</span>
+          <span class="chip" style="--cbg:var(--p2bg);--ct:var(--p2l);--cbo:var(--p2bd)">Looker Studio BI</span>
+          <span class="chip" style="--cbg:var(--p2bg);--ct:var(--p2l);--cbo:var(--p2bd)">Vertex AI 需求预测</span>
+          <span class="chip" style="--cbg:var(--p2bg);--ct:var(--p2l);--cbo:var(--p2bd)">Identity Platform 连锁账号</span>
+          <span class="chip" style="--cbg:var(--p2bg);--ct:var(--p2l);--cbo:var(--p2bd)">Cloud Pub/Sub + Run</span>
+          <span class="chip" style="--cbg:var(--p2bg);--ct:var(--p2l);--cbo:var(--p2bd)">Workspace 运营套件</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ════════════ FULL TABLES ════════════ -->
+<div class="tables-bg sec">
+  <div class="wrap">
+    <div class="eyebrow">完整能力清单</div>
+    <h2 class="sec-title">全部 64 个 API<br>场景 · 价值 · 优先级</h2>
+    <p class="sec-lead">10 大模块完整拆解，每条 API 均标注核心能力、餐饮场景与接入优先级，可直接作为研发排期参考。</p>
+
+    <!-- M1 -->
+    <div class="mod-block">
+      <div class="mod-hdr"><div class="mod-icon">🗺</div><h3>模块一：本地曝光 & 搜索</h3><span class="mod-cnt">14 个 API</span></div>
+      <table class="atbl">
+        <thead><tr><th style="width:22%">API</th><th style="width:28%">核心能力</th><th style="width:38%">餐饮场景</th><th style="width:12%">优先级</th></tr></thead>
+        <tbody>
+          <tr><td><span class="an">Business Profile API</span><span class="ast sg">🟢</span><span class="ast sdev">🔄 开发中</span></td><td class="ad">菜单、营业时间、评价、Posts、Q&A、洞察</td><td class="as">从 POS 直接同步菜单/价格到 Google，老板无需手动更新</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Places API (New)</span><span class="ast sg">🟢</span></td><td class="ad">Nearby Search · Place Details · Photos</td><td class="as">餐厅搜索曝光、附近餐厅展示、竞对信息聚合</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Geocoding API</span><span class="ast sg">🟢</span></td><td class="ad">地址 ↔ 坐标互转</td><td class="as">标准化用户输入地址，减少配送错误</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Address Validation API</span><span class="ast sg">🟢</span></td><td class="ad">地址合法性验证，精确到门牌号</td><td class="as">外卖下单时实时校验收货地址，降低配送错误率</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Geolocation API</span><span class="ast sg">🟢</span></td><td class="ad">基于基站/Wi-Fi 的设备定位</td><td class="as">用户打开点餐页自动定位，无需手动输入城市</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Routes API (New)</span><span class="ast sg">🟢</span></td><td class="ad">多途径路线规划，替代旧 Directions API</td><td class="as">骑手同时接多单时自动规划最优送餐顺序</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Distance Matrix API</span><span class="ast sg">🟢</span></td><td class="ad">批量计算多点间距离/时间</td><td class="as">顾客下单时实时计算配送费，支持动态定价</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Maps JavaScript API</span><span class="ast sg">🟢</span></td><td class="ad">可嵌入交互式地图</td><td class="as">Online Ordering 页面嵌入实时地图，展示骑手位置</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Navigation SDK + Fleet Routing</span><span class="ast sb">🔵</span></td><td class="ad">骑手端导航 + 消费者端实时轨迹回传</td><td class="as">顾客在订单页直接看到骑手实时位置，无需切换 Google Maps</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">GBP Reviews 自动回复</span><span class="ast sb">🔵</span></td><td class="ad">Gemini 生成回复 + reviews.updateReply 发布</td><td class="as">收到好评 AI 秒回；差评自动生成安抚文案，评价回复率 20%→100%</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Place Insights API</span><span class="ast sg">🟢</span></td><td class="ad">地点级搜索趋势、竞对客流分析</td><td class="as">「周边川菜搜索量上升 15% 但您点击率下降，建议开广告」</td><td><span class="pb p2b">P2</span></td></tr>
+          <tr><td><span class="an">Street View Static API</span><span class="ast sg">🟢</span></td><td class="ad">餐厅门口实景照片</td><td class="as">店铺主页展示门店实景，让新客提前认出位置</td><td><span class="pb p2b">P2</span></td></tr>
+          <tr><td><span class="an">Aerial View API</span><span class="ast sg">🟢</span></td><td class="ad">3D 鸟瞰视频（2024 年全面开放）</td><td class="as">高端餐厅主页播放鸟瞰视频，提升品牌质感</td><td><span class="pb p2b">P2</span></td></tr>
+          <tr><td><span class="an">Search Console API</span><span class="ast sg">🟢</span></td><td class="ad">有机搜索曝光、点击、排名数据</td><td class="as">监控餐厅点餐页 SEO 表现，排名下滑自动预警</td><td><span class="pb p2b">P2</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- M2 -->
+    <div class="mod-block">
+      <div class="mod-hdr"><div class="mod-icon">📅</div><h3>模块二：预订 & 在线点单</h3><span class="mod-cnt">7 个 API</span></div>
+      <div class="warn-box">⚠️ <strong>接入限制</strong>：在 Google 内完成全程不跳转点餐属于 Restricted Access，需专项申请（3–6 个月）。当前竞品均采用 Ordering Redirect 跳转模式。</div><br>
+      <table class="atbl">
+        <thead><tr><th style="width:22%">API</th><th style="width:28%">核心能力</th><th style="width:38%">餐饮场景</th><th style="width:12%">优先级</th></tr></thead>
+        <tbody>
+          <tr><td><span class="an">Ordering Redirect Links</span><span class="ast sg">🟢</span><span class="ast sdone">✅ 已接入</span></td><td class="ad">Google Maps「Order Online」按钮跳转 Chowbus H5</td><td class="as">用户在 Google Maps 搜到餐厅直接跳转下单，行业标准接入方式</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Reserve with Google</span><span class="ast sy">🟡</span></td><td class="ad">Google Search/Maps 直接完成桌台预订</td><td class="as">顾客在搜索结果页直接预订，预订单实时进 POS，需 Partner 认证</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Google Identity One Tap</span><span class="ast sg">🟢</span></td><td class="ad">扫码弹出 Google 账号一键登录</td><td class="as">顾客扫桌码一键登录获积分，转化率比短信验证码高 3 倍</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Merchant Center 菜品 Feed</span><span class="ast sg">🟢</span></td><td class="ad">结构化菜单数据激活 Google 菜品级搜索展示</td><td class="as">搜「小笼包」直接显示你家餐厅的菜品卡片，比餐厅级搜索更精准</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Waitlist API</span><span class="ast sy">🟡</span></td><td class="ad">满座候补排队 + 实时叫号 Push</td><td class="as">顾客在 Google Maps 加入候补队列，有位时自动推送通知</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">E2E Ordering（不跳转）</span><span class="ast sy">🟡</span></td><td class="ad">在 Google Maps 内完整点餐支付 ⚠️ Restricted</td><td class="as">最高转化率模式，但需向 Google 专项申请，审核周期较长</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Dialogflow CX AI 接单</span><span class="ast sb">🔵</span></td><td class="ad">AI 多轮对话自动接单 ⚠️ 需基于 Vertex AI 二次开发</td><td class="as">顾客电话说「帮我订一份老规矩」，AI 识别历史订单自动生成</td><td><span class="pb p2b">P2</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- M3 -->
+    <div class="mod-block">
+      <div class="mod-hdr"><div class="mod-icon">💳</div><h3>模块三：支付 & 钱包</h3><span class="mod-cnt">7 个 API</span></div>
+      <div class="warn-box">⚠️ <strong>Wallet 地理围栏限制</strong>：由 Google Play Services 自动触发，开发者无法主动控制推送时机和文案，仅能预设最多 10 个坐标。不等同于 FCM 精准推送。</div><br>
+      <table class="atbl">
+        <thead><tr><th style="width:22%">API</th><th style="width:28%">核心能力</th><th style="width:38%">餐饮场景</th><th style="width:12%">优先级</th></tr></thead>
+        <tbody>
+          <tr><td><span class="an">Google Pay Web</span><span class="ast sg">🟢</span></td><td class="ad">Online Ordering 页面一键支付</td><td class="as">免填卡号 3 秒付完，弃单率明显降低</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Google Pay Android NFC</span><span class="ast sg">🟢</span></td><td class="ad">POS 终端 NFC 感应支付</td><td class="as">手机靠近终端 1 秒付款，高峰结账队伍缩短 50%</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Wallet Loyalty Cards</span><span class="ast sg">🟢</span></td><td class="ad">积分卡发行、实时余额、地理围栏提醒（系统触发）</td><td class="as">消费后积分实时更新；路过餐厅时手机自动弹出积分卡</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Smart Tap + NFC 自动唤醒</span><span class="ast sy">🟡</span></td><td class="ad">手机无需解锁，靠近 POS 自动弹出会员卡</td><td class="as">一次 NFC 感应完成「亮卡 + 积分抵扣 + 支付」，Toast 在做的集成</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Wallet Pass Update 静默更新</span><span class="ast sg">🟢</span></td><td class="ad">无通知静默更新积分余额、有效期等字段</td><td class="as">每次消费静默更新会员卡余额，顾客下次打开 Wallet 看到最新积分</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Wallet Gift Cards</span><span class="ast sg">🟢</span></td><td class="ad">礼品卡发行、存储、NFC 核销</td><td class="as">电子礼品卡保存到 Wallet，到店 NFC 核销，流失率近 0</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Wallet Offers / Coupons</span><span class="ast sg">🟢</span></td><td class="ad">优惠券发行、自动过期、地理围栏提醒</td><td class="as">「周二半价」券存 Wallet，路过餐厅系统自动提醒，与 FCM 互补</td><td><span class="pb p1b">P1</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- M4 -->
+    <div class="mod-block">
+      <div class="mod-hdr"><div class="mod-icon">📣</div><h3>模块四：广告 & 营销</h3><span class="mod-cnt">5 个 API</span></div>
+      <table class="atbl">
+        <thead><tr><th style="width:22%">API</th><th style="width:28%">核心能力</th><th style="width:38%">餐饮场景</th><th style="width:12%">优先级</th></tr></thead>
+        <tbody>
+          <tr><td><span class="an">Google Ads (Local / PMax)</span><span class="ast sg">🟢</span></td><td class="ad">本地广告投放，覆盖 Maps · Search · YouTube</td><td class="as">Chowbus 后台集成广告模块，老板设预算即自动投放，无需广告经验</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Offline Conversion + Enhanced</span><span class="ast sg">🟢</span></td><td class="ad">POS 实际消费数据回传广告，提升归因准确率</td><td class="as">广告→到店消费数据闭环，Google 自动优化竞价，ROI 提升 40%</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Customer Match</span><span class="ast sg">🟢</span></td><td class="ad">上传加密老客名单做定向再营销或排除</td><td class="as">沉睡会员定向投「回来送甜品」；VIP 排除折扣广告保护利润</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Local Inventory Ads (LIA)</span><span class="ast sy">🟡</span></td><td class="ad">菜品在 Google 搜索显示「In Stock · 距你 X mi」</td><td class="as">搜「榴莲千层蛋糕」直接显示有现货及距离价格，糕点礼盒直接带货</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Local Services Ads (LSA)</span><span class="ast sg">🟢</span></td><td class="ad">按有效线索付费，搜索顶端绿色「Google Guaranteed」标志</td><td class="as">只在顾客实际来电/订座时扣费；绿标大幅提升非华人新客信任感</td><td><span class="pb p1b">P1</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- M5 -->
+    <div class="mod-block">
+      <div class="mod-hdr"><div class="mod-icon">📊</div><h3>模块五：数据 & 商业智能</h3><span class="mod-cnt">4 个 API</span></div>
+      <table class="atbl">
+        <thead><tr><th style="width:22%">API</th><th style="width:28%">核心能力</th><th style="width:38%">餐饮场景</th><th style="width:12%">优先级</th></tr></thead>
+        <tbody>
+          <tr><td><span class="an">GA4 Data API</span><span class="ast sg">🟢</span></td><td class="ad">网站/App 流量来源、转化漏斗、用户行为</td><td class="as">后台展示「本周 60% 流量来自 Google 搜索，支付转化率 28%」</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Firebase Analytics</span><span class="ast sg">🟢</span></td><td class="ad">App 内行为事件追踪</td><td class="as">发现 70% 用户在菜品详情页流失，据此优化图片，转化率提升 15%</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">BigQuery API</span><span class="ast sg">🟢</span></td><td class="ad">PB 级 SQL 数据仓库</td><td class="as">全链路销售数据汇入，支持跨餐厅、跨城市趋势分析</td><td><span class="pb p2b">P2</span></td></tr>
+          <tr><td><span class="an">Looker Studio + Conversational API</span><span class="ast sg">🟢</span></td><td class="ad">可视化 BI 看板 + 自然语言查数据</td><td class="as">连锁老板问「哪些门店翻台率下降了？」系统直接返回图表</td><td><span class="pb p2b">P2</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- M6 -->
+    <div class="mod-block">
+      <div class="mod-hdr"><div class="mod-icon">🔔</div><h3>模块六：用户运营 & 推送（Firebase）</h3><span class="mod-cnt">6 个 API</span></div>
+      <table class="atbl">
+        <thead><tr><th style="width:22%">API</th><th style="width:28%">核心能力</th><th style="width:38%">餐饮场景</th><th style="width:12%">优先级</th></tr></thead>
+        <tbody>
+          <tr><td><span class="an">Firebase Authentication</span><span class="ast sg">🟢</span></td><td class="ad">多方式登录（Google · 邮箱 · 手机号）</td><td class="as">Google 账号登录自动创建账户并绑定历史订单，无需填表</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Firebase Cloud Messaging</span><span class="ast sg">🟢</span></td><td class="ad">免费跨平台 Push（iOS · Android · Web）</td><td class="as">全程订单状态推送，「外卖到哪了」客服电话减少 60%</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Firebase App Check</span><span class="ast sg">🟢</span></td><td class="ad">验证请求来自合法 Chowbus App 实例</td><td class="as">防止竞争对手模拟请求抓取菜单数据或批量刷取优惠券</td><td><span class="pb p0b">P0</span></td></tr>
+          <tr><td><span class="an">Firestore Offline Persistence</span><span class="ast sg">🟢</span></td><td class="ad">断网状态本地读写，网络恢复自动同步</td><td class="as">餐厅网络中断 POS 仍可点单；恢复后数据自动补全，报表一分不差</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Firebase Remote Config</span><span class="ast sg">🟢</span></td><td class="ad">无需发版的远程功能开关和配置</td><td class="as">新功能灰度给 10% 用户测试，数据达标再全量，随时可回滚</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Firebase A/B Testing</span><span class="ast sg">🟢</span></td><td class="ad">Push 文案实验、UI 功能实验</td><td class="as">测试两版积分提醒，7 天后 B 版点击率高 2.3 倍，全量切换</td><td><span class="pb p1b">P1</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- M7 -->
+    <div class="mod-block">
+      <div class="mod-hdr"><div class="mod-icon">🤖</div><h3>模块七：AI & 智能化</h3><span class="mod-cnt">10 个 API</span></div>
+      <div class="warn-box">⚠️ <strong>开发说明</strong>：本模块均需基于 Vertex AI 或 Gemini API 结合餐厅业务数据二次开发，不存在可直接插拔的餐饮 AI Agent API。</div><br>
+      <table class="atbl">
+        <thead><tr><th style="width:22%">API</th><th style="width:28%">核心能力</th><th style="width:38%">餐饮场景</th><th style="width:12%">优先级</th></tr></thead>
+        <tbody>
+          <tr><td><span class="an">Gemini API</span><span class="ast sb">🔵</span></td><td class="ad">多模态生成式 AI（文字 · 图像 · 结构化数据）</td><td class="as">上传菜品照片自动生成中英双语描述；AI 根据评价生成得体回复</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Cloud Vision API</span><span class="ast sg">🟢</span></td><td class="ad">OCR 文字识别、图像内容理解</td><td class="as">拍纸质菜单照片自动识别录入 POS，新餐厅上线从 3 天变 30 分钟</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Document AI</span><span class="ast sg">🟢</span></td><td class="ad">结构化文档理解（发票 · 收据 · 合同）</td><td class="as">供应商发票拍照上传，自动提取货品/单价录入成本模块，每周省 3 小时</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Cloud Translation API</span><span class="ast sg">🟢</span></td><td class="ad">130+ 语言互译</td><td class="as">英文差评自动翻译给老板；中文回复自动翻译英文发布；菜单中英同步</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Recommendations AI</span><span class="ast sb">🔵</span></td><td class="ad">基于行为数据的个性化推荐引擎</td><td class="as">点了虾饺和肠粉，系统推荐「82% 同类顾客还加购了叉烧包」，客单价提升 $6</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Natural Language API</span><span class="ast sg">🟢</span></td><td class="ad">情感分析、实体识别、主题分类</td><td class="as">200 条评价批量分析：「差评 Top 3：等待(43%) 份量(28%) 停车(18%)」</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Cloud Speech-to-Text</span><span class="ast sb">🔵</span></td><td class="ad">125 种语言实时语音识别</td><td class="as">顾客语音点餐「一份招牌叉烧饭少油加汤」，系统自动生成订单</td><td><span class="pb p2b">P2</span></td></tr>
+          <tr><td><span class="an">Cloud Text-to-Speech</span><span class="ast sb">🔵</span></td><td class="ad">220+ 声音合成</td><td class="as">厨房 KDS 语音播报新订单「3 号桌：红烧肉 × 2」，嘈杂环境免看屏幕</td><td><span class="pb p2b">P2</span></td></tr>
+          <tr><td><span class="an">Contact Center AI (CCAI)</span><span class="ast sb">🔵</span></td><td class="ad">完整电话客服 AI 平台（语音接单 + 转人工）</td><td class="as">电话打进来 AI 接听处理标准咨询，复杂问题无缝转人工，不漏接电话</td><td><span class="pb p2b">P2</span></td></tr>
+          <tr><td><span class="an">Vertex AI 自定义模型</span><span class="ast sb">🔵</span></td><td class="ad">自定义 ML 模型训练和部署</td><td class="as">预测「本周五需备螃蟹 40 只、龙虾 15 只」，食材浪费降低 30%</td><td><span class="pb p2b">P2</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- M8 -->
+    <div class="mod-block">
+      <div class="mod-hdr"><div class="mod-icon">🔒</div><h3>模块八：安全 & 身份</h3><span class="mod-cnt">2 个 API</span></div>
+      <table class="atbl">
+        <thead><tr><th style="width:22%">API</th><th style="width:28%">核心能力</th><th style="width:38%">餐饮场景</th><th style="width:12%">优先级</th></tr></thead>
+        <tbody>
+          <tr><td><span class="an">Google Cloud Fraud Defense</span><span class="ast sg">🟢</span></td><td class="ad">Bot 检测、支付欺诈防御、AI 抢单脚本防御</td><td class="as">促销期间脚本 30 秒抢 200 张券，自动封禁，正常用户完全无感</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Identity Platform</span><span class="ast sy">🟡</span></td><td class="ad">企业级多租户用户认证，连锁门店权限隔离</td><td class="as">连锁集团多家门店共用账号，总部看全量，店长只看本店</td><td><span class="pb p2b">P2</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- M9 -->
+    <div class="mod-block">
+      <div class="mod-hdr"><div class="mod-icon">🗂</div><h3>模块九：工作效率（Google Workspace）</h3><span class="mod-cnt">4 个 API</span></div>
+      <table class="atbl">
+        <thead><tr><th style="width:22%">API</th><th style="width:28%">核心能力</th><th style="width:38%">餐饮场景</th><th style="width:12%">优先级</th></tr></thead>
+        <tbody>
+          <tr><td><span class="an">Gmail API</span><span class="ast sg">🟢</span></td><td class="ad">程序化发送邮件、管理收件箱</td><td class="as">支付后自动发电子收据；月末自动发会员消费总结邮件</td><td><span class="pb p2b">P2</span></td></tr>
+          <tr><td><span class="an">Google Calendar API</span><span class="ast sg">🟢</span></td><td class="ad">创建和同步日历事件，支持 MCP 协议（Google 2025 官方预览）</td><td class="as">排班表自动同步到每位员工 Google Calendar，告别微信群通知</td><td><span class="pb p2b">P2</span></td></tr>
+          <tr><td><span class="an">Google Sheets API</span><span class="ast sg">🟢</span></td><td class="ad">读写 Google 表格</td><td class="as">一键导出月度营业报表为 Sheets，直接分享给会计</td><td><span class="pb p2b">P2</span></td></tr>
+          <tr><td><span class="an">Google Drive API</span><span class="ast sg">🟢</span></td><td class="ad">文件云存储和管理</td><td class="as">供应商发票/收据按月自动归档，年底报税资料齐全不丢失</td><td><span class="pb p2b">P2</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- M10 -->
+    <div class="mod-block">
+      <div class="mod-hdr"><div class="mod-icon">⚙️</div><h3>模块十：云基础设施（GCP）</h3><span class="mod-cnt">5 个 API</span></div>
+      <table class="atbl">
+        <thead><tr><th style="width:22%">API</th><th style="width:28%">核心能力</th><th style="width:38%">餐饮场景</th><th style="width:12%">优先级</th></tr></thead>
+        <tbody>
+          <tr><td><span class="an">Cloud Storage</span><span class="ast sg">🟢</span></td><td class="ad">对象存储（图片 · 音视频 · 文件）</td><td class="as">菜品高清图统一存储，配合 CDN 分发，全美加载 &lt;0.5 秒</td><td><span class="pb p1b">P1</span></td></tr>
+          <tr><td><span class="an">Cloud CDN</span><span class="ast sg">🟢</span></td><td class="ad">全球内容加速分发</td><td class="as">Online Ordering 页面全美加载 &lt;1 秒，同时改善 Google 搜索排名</td><td><span class="pb p2b">P2</span></td></tr>
+          <tr><td><span class="an">Cloud Pub/Sub</span><span class="ast sg">🟢</span></td><td class="ad">实时消息流，系统解耦</td><td class="as">下单瞬间同时推送给厨房/骑手/顾客/财务，全程 &lt;1 秒</td><td><span class="pb p2b">P2</span></td></tr>
+          <tr><td><span class="an">Cloud Tasks</span><span class="ast sg">🟢</span></td><td class="ad">异步任务队列，支持延迟执行</td><td class="as">下单 30 分钟后自动触发评价提醒；积分到期前 7 天批量发送提醒</td><td><span class="pb p2b">P2</span></td></tr>
+          <tr><td><span class="an">Cloud Run / Cloud Functions</span><span class="ast sg">🟢</span></td><td class="ad">Serverless 计算，按用量计费，自动扩容</td><td class="as">日报表凌晨自动生成发送；高峰期自动扩容处理 10 倍订单</td><td><span class="pb p2b">P2</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════ FOOTER ════════════ -->
+<div class="footer-wrap">
+  <div class="footer-badge">🚀 让每一家华人餐厅，都值得被更多人发现</div>
+  <h2>现在开始<br><span class="grad">全量接入 Google 生态</span></h2>
+  <p>这不是一个技术项目，这是 Chowbus 在华人餐饮市场<br>建立不可替代位置的战略决策。</p>
+  <div style="display:flex;justify-content:center;gap:32px;margin-top:40px;flex-wrap:wrap">
+    <div style="text-align:center">
+      <div style="font-size:42px;font-weight:900;background:linear-gradient(135deg,#f87171,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-2px">18</div>
+      <div style="font-size:13px;color:var(--sub);margin-top:4px">P0 · 0-3个月</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:42px;font-weight:900;background:linear-gradient(135deg,#fbbf24,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-2px">26</div>
+      <div style="font-size:13px;color:var(--sub);margin-top:4px">P1 · 4-9个月</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:42px;font-weight:900;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-2px">20</div>
+      <div style="font-size:13px;color:var(--sub);margin-top:4px">P2 · 10-12个月</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:42px;font-weight:900;color:#fff;letter-spacing:-2px">$4.8M</div>
+      <div style="font-size:13px;color:var(--sub);margin-top:4px">年增 ARR 目标</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:42px;font-weight:900;color:#fff;letter-spacing:-2px">+$60K</div>
+      <div style="font-size:13px;color:var(--sub);margin-top:4px">商家年均额外营收</div>
+    </div>
+  </div>
+  <div class="reporter">
+    <span>汇报人</span>
+    <strong>Sisi Hu</strong>
+    <span style="color:var(--muted)">·</span>
+    <span>Chowbus</span>
+  </div>
+  <div class="footer-meta">
+    10 大模块 · 64 个 API · v2.5 · 2026-05 · Confidential
+  </div>
+</div>
+
+</body>
+</html>
